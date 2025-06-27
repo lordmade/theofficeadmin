@@ -6,7 +6,7 @@
   <title>Admin Panel - The Office</title>
 
   <!-- Google Fonts & FontAwesome -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <!-- Firebase SDK v8 -->
@@ -14,25 +14,299 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <style>
-    /* Existing styles unchanged */
-    /* Add styles for company management section */
-    .company-panel {
-      margin-top: 40px;
+    @font-face {
+      font-family: 'Anklepants';
+      src: url('Anklepants-Light.otf') format('opentype');
+      font-weight: 300;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Anklepants';
+      src: url('Anklepants-Regular.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Anklepants';
+      src: url('Anklepants-Bold.otf') format('opentype');
+      font-weight: 700;
+      font-style: normal;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f3f4f6 0%, #e0e7ff 100%);
+      color: #1f2937;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: #21211d;
+      color: #ffffff;
+      padding: 16px 0;
+      z-index: 50;
+      transition: background-color 0.3s ease;
+    }
+    nav.navbar-scrolled {
+      background-color: rgba(33, 33, 29, 0.9);
+      backdrop-filter: blur(10px);
+    }
+    nav a {
+      color: #ffffff;
+      text-decoration: none;
+    }
+    .nav-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-logo {
+      height: 32px;
+      width: auto;
+      line-height: 0;
+    }
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .nav-link {
+      font-family: 'Anklepants', serif;
+      font-weight: 400;
+      position: relative;
+      transition: transform 0.3s ease-in-out, color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+    }
+    .nav-link:hover {
+      transform: scale(1.05);
+      color: #FEE830;
+      background-color: #333333;
+      border-radius: 4px;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #FEE830;
+      transition: width 0.3s ease-in-out;
+    }
+    .nav-link:hover::after {
+      width: 80%;
+    }
+    .nav-link i {
+      margin-right: 8px;
+      transition: transform 0.3s ease-in-out;
+    }
+    .nav-link:hover i {
+      transform: scale(1.2);
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 5px;
+      padding: 10px;
+    }
+    .hamburger span {
+      width: 25px;
+      height: 3px;
+      background-color: #ffffff;
+      transition: all 0.3s ease;
+    }
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+    main {
+      margin-top: 80px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 40px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    h1 {
+      font-family: 'Anklepants', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: #21211d;
+      margin-bottom: 32px;
+      animation: typewriter 2s steps(40) forwards;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    @keyframes typewriter {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    h1::after {
+      content: '|';
+      animation: blink 0.7s infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+    .booking-panel, .company-panel {
+      margin-bottom: 40px;
       padding: 24px;
       background: #f9fafb;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
-    .company-panel h2 {
+    .booking-panel h2, .company-panel h2 {
       font-family: 'Anklepants', serif;
       font-size: 24px;
       color: #21211d;
       margin-bottom: 24px;
     }
+    .filter-container {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .filter-container select {
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 16px;
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .filter-container select:focus {
+      outline: none;
+      border-color: #FEE830;
+      box-shadow: 0 0 8px rgba(254, 232, 48, 0.5);
+    }
+    .booking-list, .company-list {
+      display: grid;
+      gap: 16px;
+    }
+    .booking-card, .company-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideIn 0.5s ease forwards;
+    }
+    .booking-card:nth-child(1), .company-card:nth-child(1) { animation-delay: 0.1s; }
+    .booking-card:nth-child(2), .company-card:nth-child(2) { animation-delay: 0.2s; }
+    .booking-card:nth-child(3), .company-card:nth-child(3) { animation-delay: 0.3s; }
+    .booking-card:nth-child(4), .company-card:nth-child(4) { animation-delay: 0.4s; }
+    @keyframes slideIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .booking-card h3, .company-card h3 {
+      font-family: 'Anklepants', serif;
+      font-size: 20px;
+      color: #21211d;
+      margin-bottom: 12px;
+    }
+    .booking-card p, .company-card p {
+      font-size: 14px;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+    .booking-card .status-pending { color: #f59e0b; }
+    .booking-card .status-accepted { color: #2e7d32; }
+    .booking-card .status-declined { color: #d32f2f; }
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .action-buttons button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .action-buttons .accept-btn {
+      background: linear-gradient(90deg, #2e7d32, #4caf50);
+      color: #fff;
+    }
+    .action-buttons .accept-btn:hover {
+      background: linear-gradient(90deg, #FEE830, #ffd700);
+      color: #21211d;
+      transform: translateY(-2px);
+    }
+    .action-buttons .decline-btn {
+      background: linear-gradient(90deg, #d32f2f, #ef5350);
+      color: #fff;
+    }
+    .action-buttons .decline-btn:hover {
+      background: linear-gradient(90deg, #FEE830, #ffd700);
+      color: #21211d;
+      transform: translateY(-2px);
+    }
+    .action-buttons .edit-btn {
+      background: linear-gradient(90deg, #1e88e5, #42a5f5);
+      color: #fff;
+    }
+    .action-buttons .edit-btn:hover {
+      background: linear-gradient(90deg, #FEE830, #ffd700);
+      color: #21211d;
+      transform: translateY(-2px);
+    }
+    .action-buttons .delete-btn {
+      background: linear-gradient(90deg, #d32f2f, #ef5350);
+      color: #fff;
+    }
+    .action-buttons .delete-btn:hover {
+      background: linear-gradient(90deg, #FEE830, #ffd700);
+      color: #21211d;
+      transform: translateY(-2px);
+    }
+    .action-buttons button:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+      transform: none;
+    }
     .company-form {
       display: flex;
       flex-direction: column;
       gap: 16px;
+      margin-bottom: 24px;
     }
     .form-group {
       position: relative;
@@ -106,28 +380,6 @@
       background: #d1d5db;
       cursor: not-allowed;
     }
-    .company-list {
-      display: grid;
-      gap: 16px;
-      margin-top: 24px;
-    }
-    .company-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    .company-card h3 {
-      font-family: 'Anklepants', serif;
-      font-size: 20px;
-      color: #21211d;
-      margin-bottom: 12px;
-    }
-    .company-card p {
-      font-size: 14px;
-      color: #1f2937;
-      margin-bottom: 8px;
-    }
     .company-card a {
       color: #1e88e5;
       text-decoration: none;
@@ -135,21 +387,128 @@
     .company-card a:hover {
       text-decoration: underline;
     }
-    /* Existing modal styles unchanged */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .modal.show {
+      display: flex;
+      opacity: 1;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 32px;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      transform: scale(0.8);
+      animation: modalPop 0.3s ease forwards;
+    }
+    @keyframes modalPop {
+      to { transform: scale(1); }
+    }
+    .modal-content h2 {
+      font-family: 'Anklepants', serif;
+      font-size: 24px;
+      margin-bottom: 16px;
+      color: #21211d;
+    }
+    .modal-content p {
+      color: #1f2937;
+      margin-bottom: 24px;
+      font-size: 16px;
+    }
+    .modal-content button {
+      background: linear-gradient(90deg, #FEE830, #ffd700);
+      color: #21211d;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .modal-content button:hover {
+      background: linear-gradient(90deg, #21211d, #3b3b33);
+      color: #fff;
+      transform: translateY(-2px);
+    }
     .modal-content form {
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
+    .no-bookings, .no-companies {
+      text-align: center;
+      font-size: 18px;
+      color: #6b7280;
+      margin-top: 24px;
+    }
     @media (max-width: 768px) {
-      .company-list {
-        grid-template-columns: 1fr;
+      main {
+        padding: 24px;
       }
-      .company-panel {
+      h1 {
+        font-size: 24px;
+      }
+      .booking-panel, .company-panel {
         padding: 16px;
       }
-      .company-panel h2 {
+      .booking-panel h2, .company-panel h2 {
         font-size: 20px;
+      }
+      .filter-container {
+        flex-direction: column;
+      }
+      .booking-list, .company-list {
+        grid-template-columns: 1fr;
+      }
+      .action-buttons {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .nav-logo {
+        height: 24px;
+      }
+      .hamburger {
+        display: flex;
+      }
+      .nav-links {
+        display: none;
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100vh;
+        width: 250px;
+        background-color: #21211d;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 60px 20px;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+      }
+      .nav-links.active {
+        display: flex;
+        transform: translateX(0);
+      }
+      .nav-link {
+        font-size: 18px;
+        padding: 10px 0;
+        width: 100%;
+      }
+      .nav-link i {
+        font-size: 18px;
       }
     }
   </style>
@@ -366,7 +725,7 @@
     return isValid;
   }
 
-  // Load and render bookings (unchanged)
+  // Load and render bookings
   function loadBookings(filterStatus = 'all', sortOrder = 'newest') {
     db.ref('bookings').once('value', (snapshot) => {
       bookingList.innerHTML = '';
@@ -419,7 +778,7 @@
     });
   }
 
-  // Update booking status (unchanged)
+  // Update booking status
   async function updateBookingStatus(bookingId, status) {
     try {
       await db.ref(`bookings/${bookingId}`).update({ status });
