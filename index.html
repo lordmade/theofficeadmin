@@ -3,77 +3,156 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Panel - Bookings</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <title>Admin Panel - Manage Bookings</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 40px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #21211d;
+      color: #fff;
+    }
+    button {
+      padding: 6px 12px;
+      margin-right: 8px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button.accept {
+      background-color: #4CAF50;
+      color: white;
+    }
+    button.decline {
+      background-color: #f44336;
+      color: white;
+    }
+  </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </head>
-<body class="bg-light">
-  <div class="container mt-5">
-    <h2 class="mb-4 text-center">📋 Booking Submissions</h2>
-    <div class="table-responsive">
-      <table class="table table-striped table-bordered" id="bookingsTable">
-        <thead class="table-dark">
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Type</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Details</th>
-          </tr>
-        </thead>
-        <tbody id="bookingsBody">
-          <!-- Bookings will appear here -->
-        </tbody>
-      </table>
-    </div>
-  </div>
+<body>
+
+  <h1>Admin Panel - Manage Bookings</h1>
+
+  <table id="bookingsTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Type</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Details</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="bookingsBody">
+      <!-- Booking rows go here -->
+    </tbody>
+  </table>
 
   <script>
+    // Firebase config (same as booking page)
     const firebaseConfig = {
       apiKey: "AIzaSyDScHqHTANLWCKH52dzbj2E5I_2kGfH360",
       authDomain: "wblogin-4cc7c.firebaseapp.com",
+      databaseURL: "https://wblogin-4cc7c-default-rtdb.firebaseio.com",
       projectId: "wblogin-4cc7c",
       storageBucket: "wblogin-4cc7c.appspot.com",
       messagingSenderId: "844089102374",
-      appId: "1:844089102374:web:82271330a05583dcde56e7",
-      measurementId: "G-CSS78QFCEQ",
-      databaseURL: "https://wblogin-4cc7c-default-rtdb.firebaseio.com"
+      appId: "1:844089102374:web:82271330a05583dcde56e7"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const bookingsRef = db.ref("bookings");
+    const bookingsBody = document.getElementById('bookingsBody');
 
-    bookingsRef.on("value", (snapshot) => {
+    // Listen for bookings in realtime
+    db.ref('bookings').on('value', snapshot => {
       const bookings = snapshot.val();
-      const tbody = document.getElementById("bookingsBody");
-      tbody.innerHTML = "";
+      bookingsBody.innerHTML = '';
 
       if (!bookings) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center">No bookings found.</td></tr>`;
+        bookingsBody.innerHTML = '<tr><td colspan="9">No bookings found</td></tr>';
         return;
       }
 
-      Object.values(bookings).forEach((booking) => {
-        const row = document.createElement("tr");
+      Object.entries(bookings).forEach(([id, booking]) => {
+        const tr = document.createElement('tr');
 
-        row.innerHTML = `
-          <td>${booking.name}</td>
-          <td>${booking.email}</td>
-          <td>${booking.phone}</td>
-          <td>${booking.type}</td>
-          <td>${booking.date}</td>
-          <td>${booking.time}</td>
-          <td>${booking.details || ""}</td>
+        tr.innerHTML = `
+          <td>${booking.name || ''}</td>
+          <td>${booking.email || ''}</td>
+          <td>${booking.phone || ''}</td>
+          <td>${formatBookingType(booking.bookingType)}</td>
+          <td>${booking.date || ''}</td>
+          <td>${booking.time || ''}</td>
+          <td>${booking.details ? sanitize(booking.details) : ''}</td>
+          <td>${booking.status || 'pending'}</td>
+          <td>
+            <button class="accept">Accept</button>
+            <button class="decline">Decline</button>
+          </td>
         `;
 
-        tbody.appendChild(row);
+        const acceptBtn = tr.querySelector('.accept');
+        const declineBtn = tr.querySelector('.decline');
+
+        acceptBtn.addEventListener('click', () => updateStatus(id, 'accepted'));
+        declineBtn.addEventListener('click', () => updateStatus(id, 'declined'));
+
+        bookingsBody.appendChild(tr);
       });
     });
+
+    function updateStatus(id, status) {
+      db.ref('bookings/' + id).update({ status })
+        .catch(err => alert('Error updating status: ' + err.message));
+    }
+
+    function formatBookingType(type) {
+      switch (type) {
+        case 'exam': return 'Online Exam - Space & Internet';
+        case 'conference': return 'Conference Room';
+        case 'other': return 'Other';
+        default: return '';
+      }
+    }
+
+    // Simple sanitize to prevent breaking HTML in details
+    function sanitize(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        })[m];
+      });
+    }
   </script>
+
 </body>
 </html>
