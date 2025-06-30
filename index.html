@@ -179,14 +179,14 @@
     @keyframes blink {
       50% { opacity: 0; }
     }
-    .booking-panel, .company-panel {
+    .booking-panel, .company-panel, .notice-panel {
       margin-bottom: 40px;
       padding: 24px;
       background: #f9fafb;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
-    .booking-panel h2, .company-panel h2 {
+    .booking-panel h2, .company-panel h2, .notice-panel h2 {
       font-family: 'Anklepants', serif;
       font-size: 24px;
       color: #21211d;
@@ -212,11 +212,11 @@
       border-color: #FEE830;
       box-shadow: 0 0 8px rgba(254, 232, 48, 0.5);
     }
-    .booking-list, .company-list {
+    .booking-list, .company-list, .notice-list {
       display: grid;
       gap: 16px;
     }
-    .booking-card, .company-card {
+    .booking-card, .company-card, .notice-card {
       background: #fff;
       border-radius: 12px;
       padding: 20px;
@@ -225,20 +225,20 @@
       transform: translateY(20px);
       animation: slideIn 0.5s ease forwards;
     }
-    .booking-card:nth-child(1), .company-card:nth-child(1) { animation-delay: 0.1s; }
-    .booking-card:nth-child(2), .company-card:nth-child(2) { animation-delay: 0.2s; }
-    .booking-card:nth-child(3), .company-card:nth-child(3) { animation-delay: 0.3s; }
-    .booking-card:nth-child(4), .company-card:nth-child(4) { animation-delay: 0.4s; }
+    .booking-card:nth-child(1), .company-card:nth-child(1), .notice-card:nth-child(1) { animation-delay: 0.1s; }
+    .booking-card:nth-child(2), .company-card:nth-child(2), .notice-card:nth-child(2) { animation-delay: 0.2s; }
+    .booking-card:nth-child(3), .company-card:nth-child(3), .notice-card:nth-child(3) { animation-delay: 0.3s; }
+    .booking-card:nth-child(4), .company-card:nth-child(4), .notice-card:nth-child(4) { animation-delay: 0.4s; }
     @keyframes slideIn {
       to { opacity: 1; transform: translateY(0); }
     }
-    .booking-card h3, .company-card h3 {
+    .booking-card h3, .company-card h3, .notice-card h3 {
       font-family: 'Anklepants', serif;
       font-size: 20px;
       color: #21211d;
       margin-bottom: 12px;
     }
-    .booking-card p, .company-card p {
+    .booking-card p, .company-card p, .notice-card p {
       font-size: 14px;
       color: #1f2937;
       margin-bottom: 8px;
@@ -302,7 +302,7 @@
       cursor: not-allowed;
       transform: none;
     }
-    .company-form {
+    .company-form, .notice-form {
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -359,7 +359,7 @@
     .form-group.invalid .error-message {
       display: block;
     }
-    .company-form button {
+    .company-form button, .notice-form button {
       background: linear-gradient(90deg, #21211d, #3b3b33);
       color: #fff;
       border: none;
@@ -371,12 +371,12 @@
       box-shadow: 0 6px 20px rgba(254, 232, 48, 0.4);
       transition: all 0.3s ease;
     }
-    .company-form button:hover {
+    .company-form button:hover, .notice-form button:hover {
       background: linear-gradient(90deg, #FEE830, #ffd700);
       color: #21211d;
       transform: translateY(-2px);
     }
-    .company-form button:disabled {
+    .company-form button:disabled, .notice-form button:disabled {
       background: #d1d5db;
       cursor: not-allowed;
     }
@@ -449,7 +449,7 @@
       flex-direction: column;
       gap: 16px;
     }
-    .no-bookings, .no-companies {
+    .no-bookings, .no-companies, .no-notices {
       text-align: center;
       font-size: 18px;
       color: #6b7280;
@@ -462,16 +462,16 @@
       h1 {
         font-size: 24px;
       }
-      .booking-panel, .company-panel {
+      .booking-panel, .company-panel, .notice-panel {
         padding: 16px;
       }
-      .booking-panel h2, .company-panel h2 {
+      .booking-panel h2, .company-panel h2, .notice-panel h2 {
         font-size: 20px;
       }
       .filter-container {
         flex-direction: column;
       }
-      .booking-list, .company-list {
+      .booking-list, .company-list, .notice-list {
         grid-template-columns: 1fr;
       }
       .action-buttons {
@@ -545,7 +545,7 @@
 </nav>
 
 <main>
-  <h1>Admin Panel - Manage Bookings & Companies</h1>
+  <h1>Admin Panel - Manage Bookings, Companies & Notices</h1>
   <section class="booking-panel">
     <h2>Manage Bookings</h2>
     <div class="filter-container">
@@ -599,6 +599,33 @@
     </form>
     <div class="company-list" id="companyList"></div>
   </section>
+  <section class="notice-panel">
+    <h2>Manage Notices</h2>
+    <form id="noticeForm" novalidate>
+      <div class="form-group">
+        <input type="text" id="noticeTitle" name="noticeTitle" placeholder=" " required aria-describedby="noticeTitle-error" />
+        <label for="noticeTitle">Notice Title</label>
+        <span class="error-message" id="noticeTitle-error">Please enter the notice title</span>
+      </div>
+      <div class="form-group">
+        <textarea id="noticeDescription" name="noticeDescription" placeholder=" " required aria-describedby="noticeDescription-error"></textarea>
+        <label for="noticeDescription">Description</label>
+        <span class="error-message" id="noticeDescription-error">Please enter a description</span>
+      </div>
+      <div class="form-group">
+        <input type="date" id="noticeDate" name="noticeDate" placeholder=" " required aria-describedby="noticeDate-error" />
+        <label for="noticeDate">Date</label>
+        <span class="error-message" id="noticeDate-error">Please enter a valid date</span>
+      </div>
+      <div class="form-group">
+        <input type="text" id="noticeAuthor" name="noticeAuthor" placeholder=" " aria-describedby="noticeAuthor-error" />
+        <label for="noticeAuthor">Author (optional)</label>
+        <span class="error-message" id="noticeAuthor-error">Please enter a valid author name</span>
+      </div>
+      <button type="submit" aria-label="Add notice">Add Notice</button>
+    </form>
+    <div class="notice-list" id="noticeList"></div>
+  </section>
 </main>
 
 <!-- Modal for action feedback -->
@@ -651,6 +678,37 @@
   </div>
 </div>
 
+<!-- Modal for editing notice -->
+<div id="editNoticeModal" class="modal">
+  <div class="modal-content">
+    <h2>Edit Notice</h2>
+    <form id="editNoticeForm" novalidate>
+      <input type="hidden" id="editNoticeId" />
+      <div class="form-group">
+        <input type="text" id="editNoticeTitle" name="editNoticeTitle" placeholder=" " required aria-describedby="editNoticeTitle-error" />
+        <label for="editNoticeTitle">Notice Title</label>
+        <span class="error-message" id="editNoticeTitle-error">Please enter the notice title</span>
+      </div>
+      <div class="form-group">
+        <textarea id="editNoticeDescription" name="editNoticeDescription" placeholder=" " required aria-describedby="editNoticeDescription-error"></textarea>
+        <label for="editNoticeDescription">Description</label>
+        <span class="error-message" id="editNoticeDescription-error">Please enter a description</span>
+      </div>
+      <div class="form-group">
+        <input type="date" id="editNoticeDate" name="editNoticeDate" placeholder=" " required aria-describedby="editNoticeDate-error" />
+        <label for="editNoticeDate">Date</label>
+        <span class="error-message" id="editNoticeDate-error">Please enter a valid date</span>
+      </div>
+      <div class="form-group">
+        <input type="text" id="editNoticeAuthor" name="editNoticeAuthor" placeholder=" " aria-describedby="editNoticeAuthor-error" />
+        <label for="editNoticeAuthor">Author (optional)</label>
+        <span class="error-message" id="editNoticeAuthor-error">Please enter a valid author name</span>
+      </div>
+      <button type="submit" aria-label="Save changes">Save Changes</button>
+    </form>
+  </div>
+</div>
+
 <script>
   // Firebase configuration
   const firebaseConfig = {
@@ -684,6 +742,10 @@
   const companyList = document.getElementById('companyList');
   const editCompanyModal = document.getElementById('editCompanyModal');
   const editCompanyForm = document.getElementById('editCompanyForm');
+  const noticeForm = document.getElementById('noticeForm');
+  const noticeList = document.getElementById('noticeList');
+  const editNoticeModal = document.getElementById('editNoticeModal');
+  const editNoticeForm = document.getElementById('editNoticeForm');
 
   // Show modal
   function showModal(title, message) {
@@ -706,6 +768,8 @@
       actionModal.style.display = 'none';
       editCompanyModal.className = 'modal';
       editCompanyModal.style.display = 'none';
+      editNoticeModal.className = 'modal';
+      editNoticeModal.style.display = 'none';
     }
   });
 
@@ -810,6 +874,7 @@
       companies.forEach(company => {
         const card = document.createElement('div');
         card.className = 'company-card';
+        card.setAttribute('aria-label', `Company: ${company.name}`);
         card.innerHTML = `
           <h3>${company.name}</h3>
           <p><strong>Description:</strong> ${company.description}</p>
@@ -830,6 +895,48 @@
       });
       document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', () => deleteCompany(btn.dataset.id));
+      });
+    });
+  }
+
+  // Load and render notices
+  function loadNotices() {
+    db.ref('notices').orderByChild('timestamp').once('value', (snapshot) => {
+      noticeList.innerHTML = '';
+      const notices = [];
+      snapshot.forEach((childSnapshot) => {
+        notices.push({ id: childSnapshot.key, ...childSnapshot.val() });
+      });
+
+      if (notices.length === 0) {
+        noticeList.innerHTML = '<p class="no-notices">No notices found.</p>';
+        return;
+      }
+
+      notices.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+      notices.forEach(notice => {
+        const card = document.createElement('div');
+        card.className = 'notice-card';
+        card.setAttribute('aria-label', `Notice: ${notice.title}`);
+        card.innerHTML = `
+          <h3>${notice.title}</h3>
+          <p><strong>Description:</strong> ${notice.description}</p>
+          <p><strong>Date:</strong> ${notice.date}</p>
+          ${notice.author ? `<p><strong>Author:</strong> ${notice.author}</p>` : ''}
+          <div class="action-buttons">
+            <button class="edit-btn" data-id="${notice.id}" aria-label="Edit notice">Edit</button>
+            <button class="delete-btn" data-id="${notice.id}" aria-label="Delete notice">Delete</button>
+          </div>
+        `;
+        noticeList.appendChild(card);
+      });
+
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => openEditNoticeModal(btn.dataset.id));
+      });
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteNotice(btn.dataset.id));
       });
     });
   }
@@ -860,6 +967,33 @@
     } catch (error) {
       console.error('Error adding company:', error);
       showModal('Error', 'Failed to add company. Please try again.');
+    }
+  });
+
+  // Add notice
+  noticeForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validateForm(noticeForm)) {
+      noticeForm.reportValidity();
+      return;
+    }
+
+    const notice = {
+      title: noticeForm.noticeTitle.value.trim(),
+      description: noticeForm.noticeDescription.value.trim(),
+      date: noticeForm.noticeDate.value.trim(),
+      author: noticeForm.noticeAuthor.value.trim() || null,
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    try {
+      await db.ref('notices').push(notice);
+      showModal('Success', 'Notice added successfully.');
+      noticeForm.reset();
+      noticeForm.querySelectorAll('.form-group').forEach(group => group.classList.remove('invalid'));
+    } catch (error) {
+      console.error('Error adding notice:', error);
+      showModal('Error', 'Failed to add notice. Please try again.');
     }
   });
 
@@ -916,6 +1050,55 @@
     }
   });
 
+  // Open edit notice modal
+  async function openEditNoticeModal(noticeId) {
+    try {
+      const snapshot = await db.ref(`notices/${noticeId}`).once('value');
+      const notice = snapshot.val();
+      if (!notice) return;
+
+      document.getElementById('editNoticeId').value = noticeId;
+      document.getElementById('editNoticeTitle').value = notice.title;
+      document.getElementById('editNoticeDescription').value = notice.description;
+      document.getElementById('editNoticeDate').value = notice.date;
+      document.getElementById('editNoticeAuthor').value = notice.author || '';
+      editNoticeModal.className = 'modal show';
+      editNoticeModal.style.display = 'flex';
+    } catch (error) {
+      console.error('Error loading notice data:', error);
+      showModal('Error', 'Failed to load notice data. Please try again.');
+    }
+  }
+
+  // Edit notice
+  editNoticeForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validateForm(editNoticeForm)) {
+      editNoticeForm.reportValidity();
+      return;
+    }
+
+    const noticeId = document.getElementById('editNoticeId').value;
+    const notice = {
+      title: editNoticeForm.editNoticeTitle.value.trim(),
+      description: editNoticeForm.editNoticeDescription.value.trim(),
+      date: editNoticeForm.editNoticeDate.value.trim(),
+      author: editNoticeForm.editNoticeAuthor.value.trim() || null,
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    try {
+      await db.ref(`notices/${noticeId}`).update(notice);
+      showModal('Success', 'Notice updated successfully.');
+      editNoticeModal.className = 'modal';
+      editNoticeModal.style.display = 'none';
+      editNoticeForm.reset();
+    } catch (error) {
+      console.error('Error updating notice:', error);
+      showModal('Error', 'Failed to update notice. Please try again.');
+    }
+  });
+
   // Delete company
   async function deleteCompany(companyId) {
     if (!confirm('Are you sure you want to delete this company?')) return;
@@ -926,6 +1109,19 @@
     } catch (error) {
       console.error('Error deleting company:', error);
       showModal('Error', 'Failed to delete company. Please try again.');
+    }
+  }
+
+  // Delete notice
+  async function deleteNotice(noticeId) {
+    if (!confirm('Are you sure you want to delete this notice?')) return;
+
+    try {
+      await db.ref(`notices/${noticeId}`).remove();
+      showModal('Success', 'Notice deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting notice:', error);
+      showModal('Error', 'Failed to delete notice. Please try again.');
     }
   }
 
@@ -946,9 +1142,15 @@
   db.ref('companies').on('child_changed', loadCompanies);
   db.ref('companies').on('child_removed', loadCompanies);
 
+  // Real-time updates for notices
+  db.ref('notices').on('child_added', loadNotices);
+  db.ref('notices').on('child_changed', loadNotices);
+  db.ref('notices').on('child_removed', loadNotices);
+
   // Initial loads
   loadBookings();
   loadCompanies();
+  loadNotices();
 
   // Navbar scroll effect
   window.addEventListener('scroll', () => {
